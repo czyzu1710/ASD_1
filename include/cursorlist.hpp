@@ -24,9 +24,11 @@ class CursorList{
   class Node;
  private:
   Node *tab;
-  int head;
-  int free;
+  int head_node;
+  int free_node;
   int actual_size;
+  int last_free_node;
+  int last_head_node;
 };
 
 template <typename T>
@@ -37,9 +39,33 @@ class CursorList <T> ::Node{
 };
 
 template<typename T>
-CursorList<T>::CursorList():head{0}, free{0}, actual_size{0} {
+CursorList<T>::CursorList():head_node{NULL}, free_node{0}, actual_size{0} {
 tab = new Node[1000000];
 }
 
+template<typename T>
+CursorList<T>::CursorList(int max_num):head_node{NULL}, free_node{0},
+actual_size{0}, last_free_node{0} {
+tab = new T[max_num];
+for(int i=max_num-2; i >= 0; i--) {
+  tab[i].next = i+1;
+  tab[i].value = NULL;
+}
+tab[max_num-1].value = NULL;
+tab[max_num-1].next = 0;
+}
+
+template<typename T>
+void CursorList<T>::push_back(T element) {
+tab[last_head_node].next = free_node;
+tab[free_node].value = element;
+tab[free_node].next = NULL;
+free_node = tab[free_node].next;
+}
+
+template <typename T>
+void CursorList<T>::push_front(T element) {
+tab[free_node].value = element;
+}
 
 #endif  // INCLUDE_CURSORLIST_HPP_
